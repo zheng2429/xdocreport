@@ -61,15 +61,7 @@ import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPrBase;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPrBase;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextDirection;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTrPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextDirection;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -534,6 +526,15 @@ public class CSSStylesDocument
         CTStyle style = super.getStyle( styleID );
         while ( style != null )
         {
+            //添加层级样式 start
+            CTPPrGeneral pPr = style.getPPr();
+            if (pPr!=null){
+                CTDecimalNumber outlineLvl = pPr.getOutlineLvl();
+                if (outlineLvl!=null){
+                    classNames.insert( 0, "outlineLvl-"+outlineLvl.getVal()+" ");
+                }
+            }
+            //添加层级样式 end
             style = super.getStyle( style.getBasedOn() );
             if ( style != null )
             {

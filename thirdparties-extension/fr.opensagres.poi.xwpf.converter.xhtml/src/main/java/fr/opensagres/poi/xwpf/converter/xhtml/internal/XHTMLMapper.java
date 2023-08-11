@@ -72,20 +72,7 @@ import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromH.Enum;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTwipsMeasure;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtrRef;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPTab;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageMar;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTabs;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STSignedTwipsMeasure;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -223,6 +210,16 @@ public class XHTMLMapper
 
         // 1.2) Create "style" attributes.
         CTPPr pPr = paragraph.getCTP().getPPr();
+        // 1.3)创建层级样式
+        if (pPr!=null){
+            CTDecimalNumber outlineLvl = pPr.getOutlineLvl();
+            if (outlineLvl!=null && attributes!=null){
+                int classIndex = attributes.getIndex("class");
+                String value = attributes.getValue(classIndex);
+                value+=" "+"outlineLvl-"+outlineLvl.getVal();
+                attributes.setValue(classIndex,value);
+            }
+        }
         CSSStyle cssStyle = getStylesDocument().createCSSStyle( pPr );
         if(cssStyle != null) {
             cssStyle.addProperty(CSSStylePropertyConstants.WHITE_SPACE, "pre-wrap");            
