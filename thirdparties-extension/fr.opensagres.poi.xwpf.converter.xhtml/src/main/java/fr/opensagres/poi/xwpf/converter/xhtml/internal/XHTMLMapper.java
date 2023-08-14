@@ -54,8 +54,11 @@ import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePro
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSProperty;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
@@ -114,7 +117,7 @@ public class XHTMLMapper
      */
     private XWPFParagraph currentParagraph;
 
-    private boolean generateStyles = true;
+    private boolean generateStyles;
 
     private final IURIResolver resolver;
 
@@ -128,6 +131,7 @@ public class XHTMLMapper
         super( document, options != null ? options : XHTMLOptions.getDefault() );
         this.contentHandler = contentHandler;
         this.resolver = getOptions().getURIResolver();
+        this.generateStyles = getOptions().isGenerateStyles();
         this.pageDiv = false;
     }
 
@@ -221,6 +225,9 @@ public class XHTMLMapper
             }
         }
         CSSStyle cssStyle = getStylesDocument().createCSSStyle( pPr );
+        if (cssStyle == null && attributes != null) {
+            cssStyle = new CSSStyle( P_ELEMENT, null );
+        }
         if(cssStyle != null) {
             cssStyle.addProperty(CSSStylePropertyConstants.WHITE_SPACE, "pre-wrap");            
         }
@@ -269,6 +276,9 @@ public class XHTMLMapper
         // 1.2) Create "style" attributes.
         CTRPr rPr = run.getCTR().getRPr();
         CSSStyle cssStyle = getStylesDocument().createCSSStyle( rPr );
+        if (cssStyle == null && this.currentRunAttributes != null) {
+            cssStyle = new CSSStyle( SPAN_ELEMENT, null );
+        }
         if (cssStyle != null) {
             cssStyle.addProperty(CSSStylePropertyConstants.WHITE_SPACE, "pre-wrap");
         }
@@ -347,6 +357,9 @@ public class XHTMLMapper
 
         // 1.2) Create "style" attributes.
         CSSStyle cssStyle = getStylesDocument().createCSSStyle( rPr );
+        if (cssStyle == null && runAttributes != null) {
+            cssStyle = new CSSStyle( SPAN_ELEMENT, null );
+        }
         if(cssStyle != null) {
         	Color color = RunTextHighlightingValueProvider.INSTANCE.getValue(rPr, getStylesDocument());
         	if(color != null) cssStyle.addProperty(CSSStylePropertyConstants.BACKGROUND_COLOR, StringUtils.toHexString(color));
@@ -771,8 +784,36 @@ public class XHTMLMapper
         if ( cssStyle != null )
         {
             String inlineStyles = cssStyle.getInlineStyles();
-            if ( StringUtils.isNotEmpty( inlineStyles ) )
+            if ( StringUtils.isNotEmpty( inlineStyles ))
             {
+                //类样式生成在行内
+                if (attributes!=null && !generateStyles){
+                    int classIndex = attributes.getIndex("class");
+                    String value = attributes.getValue(classIndex);
+                    String[] styleClass = value.split(" ");
+                    List<CSSStyle> cssStyles = this.getStylesDocument().getCSSStyles();
+                    Map<String,String> map = new HashMap<>();
+                    //类样式处理到style内
+                    for (String className : styleClass) {
+                        for (CSSStyle style : cssStyles) {
+                            if (style.getTagName().equals(cssStyle.getTagName())&&
+                                (style.getClassName()==null||
+                                (style.getClassName()!=null && style.getClassName().equals(className)))){
+                                List<CSSProperty> properties = style.getProperties();
+                                for (CSSProperty property : properties) {
+                                    map.put(property.getName(),property.getValue());
+                                }
+                            }
+                        }
+                    }
+                    //替换类样式
+                    for (String k : map.keySet()) {
+                        String v = map.get(k);
+                        cssStyle.replaceStyle(k,v,false);
+                    }
+
+                    inlineStyles = cssStyle.getInlineStyles();
+                }
                 attributes = SAXHelper.addAttrValue( attributes, STYLE_ATTR, inlineStyles );
             }
         }

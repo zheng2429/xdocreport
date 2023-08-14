@@ -100,6 +100,26 @@ public class CSSStyle
         properties.add( new CSSProperty( name, value ) );
     }
 
+    public void replaceStyle(String name, String value, boolean isCover) {
+        if (properties == null) {
+            properties = new ArrayList<CSSProperty>();
+        }
+        String inlineStyles = getInlineStyles();
+        if (inlineStyles.contains(name)) {
+            for (int i = 0; i < properties.size(); i++) {
+                CSSProperty property = properties.get(i);
+                if (property.getName().equals(name)) {
+                    if (isCover) {
+                        properties.set(i,new CSSProperty(name,value));
+                    }
+                }
+            }
+        } else {
+            addProperty(name, value);
+        }
+
+    }
+
     public List<CSSProperty> getProperties()
     {
         if ( properties == null )
@@ -114,4 +134,11 @@ public class CSSStyle
         return properties != null && properties.size() > 0;
     }
 
+    public String getTagName() {
+        return tagName;
+    }
+
+    public String getClassName() {
+        return className;
+    }
 }

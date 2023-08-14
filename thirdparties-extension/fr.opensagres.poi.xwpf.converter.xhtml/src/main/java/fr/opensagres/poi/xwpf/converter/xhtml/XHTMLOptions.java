@@ -38,6 +38,8 @@ public class XHTMLOptions
 
     private boolean omitHeaderFooterPages;
 
+    private boolean generateStyles;
+
     private boolean fragment;
 
     private boolean ignoreStylesIfUnused;
@@ -52,6 +54,7 @@ public class XHTMLOptions
         this.omitHeaderFooterPages = false;
         this.fragment = false;
         this.ignoreStylesIfUnused = true;
+        this.generateStyles = false;
         this.resolver = IURIResolver.DEFAULT;
     }
 
@@ -124,6 +127,15 @@ public class XHTMLOptions
     public XHTMLOptions setIgnoreStylesIfUnused( boolean ignoreStylesIfUnused )
     {
         this.ignoreStylesIfUnused = ignoreStylesIfUnused;
+        return this;
+    }
+
+    public boolean isGenerateStyles() {
+        return generateStyles;
+    }
+
+    public XHTMLOptions setGenerateStyles(boolean generateStyles) {
+        this.generateStyles = generateStyles;
         return this;
     }
 
