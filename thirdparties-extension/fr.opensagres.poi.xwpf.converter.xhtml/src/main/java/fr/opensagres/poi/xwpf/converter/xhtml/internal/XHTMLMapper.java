@@ -340,9 +340,17 @@ public class XHTMLMapper
     @Override
     protected void visitStyleText(XWPFRun run, String text, Object parent, boolean pageNumber) throws Exception
     {
+        //添加字体样式的判断 兼容汉字
     	if(run.getFontFamily() == null) {
-			run.setFontFamily(getStylesDocument().getFontFamilyAscii(run));
-		}
+            String fontFamilyAscii = getStylesDocument().getFontFamilyAscii(run);
+            String fontFamil = fontFamilyAscii;
+            String fontFamilyEastAsia = getStylesDocument().getFontFamilyEastAsia(run);
+            String fontFamilyHAnsi = getStylesDocument().getFontFamilyHAnsi(run);
+            if (fontFamilyHAnsi!=null || "eastAsia".equals(fontFamilyHAnsi)){
+                fontFamil = fontFamilyEastAsia;
+            }
+            run.setFontFamily(fontFamil);
+        }
     	
 		if(run.getFontSize() <= 0) {
 			run.setFontSize(getStylesDocument().getFontSize(run).intValue());

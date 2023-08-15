@@ -914,7 +914,8 @@ public abstract class XWPFDocumentVisitor<T, O extends Options, E extends IXWPFM
 
     protected boolean hasTextStyles( CTRPr rPr )
     {
-        return rPr != null && ( rPr.sizeOfHighlightArray() > 0 || rPr.sizeOfStrikeArray() > 0 || rPr.sizeOfDstrikeArray() > 0
+        //修复字体样式的判断
+        return rPr != null && (rPr.sizeOfRFontsArray()>0|| rPr.sizeOfHighlightArray() > 0 || rPr.sizeOfStrikeArray() > 0 || rPr.sizeOfDstrikeArray() > 0
             || rPr.sizeOfVertAlignArray() > 0 );
     }
 
