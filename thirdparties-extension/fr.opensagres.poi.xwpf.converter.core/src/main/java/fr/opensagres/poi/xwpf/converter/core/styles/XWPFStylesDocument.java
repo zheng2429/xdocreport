@@ -529,6 +529,11 @@ public class XWPFStylesDocument
         return ParagraphLineSpacingValueProvider.INSTANCE.getValue( pPr );
     }
 
+    public ParagraphLineSpacing getParagraphSpacing( CTPPrBase pPr )
+    {
+        return ParagraphLineSpacingValueProvider.INSTANCE.getValue( pPr );
+    }
+
     public ParagraphLineSpacing getParagraphSpacing( CTP paragraph, CTTbl table )
     {
         return fr.opensagres.poi.xwpf.converter.core.openxmlformats.styles.paragraph.ParagraphLineSpacingValueProvider.INSTANCE.getValue( paragraph,

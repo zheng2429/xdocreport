@@ -29,34 +29,13 @@ import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.SPA
 import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.TABLE_ELEMENT;
 import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.TD_ELEMENT;
 import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.TR_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.BACKGROUND_COLOR;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.COLOR;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.FONT_FAMILY;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.FONT_SIZE;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.FONT_STYLE;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.FONT_STYLE_ITALIC;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.FONT_WEIGHT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.FONT_WEIGHT_BOLD;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.HEIGHT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.MARGIN_BOTTOM;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.MARGIN_LEFT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.MARGIN_RIGHT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.MARGIN_TOP;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.MIN_HEIGHT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.TEXT_ALIGN;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.TEXT_ALIGN_CENTER;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.TEXT_ALIGN_JUSTIFIED;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.TEXT_ALIGN_LEFT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.TEXT_ALIGN_RIGHT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.TEXT_DECORATION;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.TEXT_DECORATION_UNDERLINE;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.TEXT_INDENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.WIDTH;
+import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.opensagres.poi.xwpf.converter.core.ParagraphLineSpacing;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -221,6 +200,22 @@ public class CSSStylesDocument
             {
                 style = getOrCreateStyle( style, tagName, className );
                 style.addProperty( BACKGROUND_COLOR, XWPFUtils.toHexString( backgroundColor ) );
+            }
+            // lineSpacing
+            ParagraphLineSpacing lineSpacing = super.getParagraphSpacing( pPr );
+            if ( lineSpacing != null )
+            {
+                if ( lineSpacing.getLeading() != null || lineSpacing.getMultipleLeading() != null )
+                {
+                    Float lineHeight;
+                    lineHeight = lineSpacing.getMultipleLeading();
+                    if ( lineSpacing.getLeading() != null )
+                    {
+                        lineHeight = lineSpacing.getLeading();
+                    }
+                    style.addProperty( LINE_HEIGHT, lineHeight.toString() );
+                }
+
             }
             return style;
         }
