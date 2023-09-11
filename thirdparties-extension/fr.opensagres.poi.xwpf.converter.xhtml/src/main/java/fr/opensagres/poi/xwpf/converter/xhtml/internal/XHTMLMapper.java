@@ -25,26 +25,7 @@
 package fr.opensagres.poi.xwpf.converter.xhtml.internal;
 
 import static fr.opensagres.poi.xwpf.converter.core.utils.DxaUtil.emu2points;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.A_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.BODY_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.BR_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.CLASS_ATTR;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.COLSPAN_ATTR;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.DIV_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.HEAD_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.HREF_ATTR;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.HTML_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.ID_ATTR;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.IMG_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.P_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.ROWSPAN_ATTR;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.SPAN_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.SRC_ATTR;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.STYLE_ATTR;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.TABLE_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.TD_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.TH_ELEMENT;
-import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.TR_ELEMENT;
+import static fr.opensagres.poi.xwpf.converter.xhtml.internal.XHTMLConstants.*;
 import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.HEIGHT;
 import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.MARGIN_BOTTOM;
 import static fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSStylePropertyConstants.MARGIN_LEFT;
@@ -214,9 +195,17 @@ public class XHTMLMapper
 
         // 1.2) Create "style" attributes.
         CTPPr pPr = paragraph.getCTP().getPPr();
+        CTStyle style = this.getStylesDocument().getStyle(paragraph.getStyleID());
+        CTDecimalNumber outlineLvl = null;
+        if (style!=null){
+            CTPPrGeneral stylePPr = style.getPPr();
+            if (stylePPr!=null){
+                outlineLvl = stylePPr.getOutlineLvl();
+            }
+        }
         // 1.3)创建层级样式
-        if (pPr!=null){
-            CTDecimalNumber outlineLvl = pPr.getOutlineLvl();
+        if (pPr!=null && outlineLvl==null){
+            outlineLvl = pPr.getOutlineLvl();
             if (outlineLvl!=null && attributes!=null){
                 int classIndex = attributes.getIndex("class");
                 String value = attributes.getValue(classIndex);
@@ -234,8 +223,15 @@ public class XHTMLMapper
         attributes = createStyleAttribute( cssStyle, attributes );
 
         // 2) create element
-        startElement( P_ELEMENT, attributes );
-        
+        //针对1级层级设置标题1样式
+        if (outlineLvl!=null){
+            String headTag = fetchTitle(outlineLvl.getVal().intValue());
+
+            startElement( headTag, attributes );
+        }else {
+            startElement( P_ELEMENT, attributes );
+        }
+
         //To handle list items in paragraph
         if(itemContext != null)
         {			
@@ -256,7 +252,27 @@ public class XHTMLMapper
     protected void endVisitParagraph( XWPFParagraph paragraph, Object parentContainer, Object paragraphContainer )
         throws Exception
     {
-        endElement( P_ELEMENT );
+        // 1.2) Create "style" attributes.
+        CTPPr pPr = paragraph.getCTP().getPPr();
+        CTDecimalNumber outlineLvl = null;
+        CTStyle style = this.getStylesDocument().getStyle(paragraph.getStyleID());
+        if (style!=null){
+            CTPPrGeneral stylePPr = style.getPPr();
+            if (stylePPr!=null){
+                outlineLvl = stylePPr.getOutlineLvl();
+            }
+        }
+        // 1.3)创建层级样式
+        if (pPr!=null && outlineLvl==null){
+            outlineLvl = pPr.getOutlineLvl();
+        }
+        //针对1级层级设置标题1样式
+        if (outlineLvl!=null){
+            String headTag = fetchTitle(outlineLvl.getVal().intValue());
+            endElement(headTag);
+        }else {
+            endElement( P_ELEMENT);
+        }
     }
 
     @Override
@@ -826,5 +842,29 @@ public class XHTMLMapper
             }
         }
         return attributes;
+    }
+
+    private String fetchTitle(int outlineLvl){
+        String headTag = H1_ELT;
+        switch (outlineLvl){
+            case 1:
+                headTag = H2_ELT;
+                break;
+            case 2:
+                headTag = H3_ELT;
+                break;
+            case 3:
+                headTag = H4_ELT;
+                break;
+            case 4:
+                headTag = H5_ELT;
+                break;
+            case 5:
+                headTag = H6_ELT;
+                break;
+            default:
+                break;
+        }
+        return headTag;
     }
 }

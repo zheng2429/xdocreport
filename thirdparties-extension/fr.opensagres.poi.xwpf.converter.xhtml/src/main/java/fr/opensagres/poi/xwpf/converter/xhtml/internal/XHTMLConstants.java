@@ -49,6 +49,19 @@ public class XHTMLConstants
 
     public static final String P_ELEMENT = "p";
 
+    // HTML elements for Titles
+    public static final String H1_ELT = "h1";
+
+    public static final String H2_ELT = "h2";
+
+    public static final String H3_ELT = "h3";
+
+    public static final String H4_ELT = "h4";
+
+    public static final String H5_ELT = "h5";
+
+    public static final String H6_ELT = "h6";
+
     public static final String BR_ELEMENT = "br";
 
     public static final String DIV_ELEMENT = "div";
