@@ -213,7 +213,7 @@ public class CSSStylesDocument
                     {
                         lineHeight = lineSpacing.getLeading();
                     }
-                    style.addProperty( LINE_HEIGHT, lineHeight.toString() );
+                    style.addProperty( LINE_HEIGHT, getValueAsPoint(lineHeight) );
                 }
 
             }

@@ -39,6 +39,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.microsoft.schemas.vml.CTImageData;
+import com.microsoft.schemas.vml.CTShape;
+import fr.opensagres.poi.xwpf.converter.core.*;
 import fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSProperty;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;
@@ -50,7 +53,9 @@ import org.apache.poi.xwpf.usermodel.XWPFSDT;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.STRelFromH.Enum;
@@ -62,12 +67,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import fr.opensagres.poi.xwpf.converter.core.BorderSide;
-import fr.opensagres.poi.xwpf.converter.core.Color;
-import fr.opensagres.poi.xwpf.converter.core.IURIResolver;
-import fr.opensagres.poi.xwpf.converter.core.ListItemContext;
-import fr.opensagres.poi.xwpf.converter.core.TableCellBorder;
-import fr.opensagres.poi.xwpf.converter.core.XWPFDocumentVisitor;
 import fr.opensagres.poi.xwpf.converter.core.styles.XWPFStylesDocument;
 import fr.opensagres.poi.xwpf.converter.core.styles.run.RunFontStyleStrikeValueProvider;
 import fr.opensagres.poi.xwpf.converter.core.styles.run.RunTextHighlightingValueProvider;
@@ -677,7 +676,43 @@ public class XHTMLMapper
     @Override
     protected void visitVmlPicture(org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPicture picture,
                                    Object pdfParentContainer) throws Exception {
-       //TODO: Add VML support if requited for XHTML
+        XmlCursor pictureCur = picture.newCursor();
+        pictureCur.selectPath("./*");
+        while (pictureCur.toNextSelection()) {
+            XmlObject obj = pictureCur.getObject();
+            if (obj instanceof CTShape) {
+                CTShape shape = (CTShape) obj;
+
+                List<CTImageData> imagedataList = shape.getImagedataList();
+                for (CTImageData imageData : imagedataList) {
+                    XWPFPictureData pictureData = getPictureDataByID(imageData.getId2());
+                    visitVmlPicture(pictureData, shape.getStyle(), pdfParentContainer);
+                }
+            }
+        }
+        pictureCur.dispose();
+    }
+
+    protected void visitVmlPicture(
+            XWPFPictureData pictureData, String style, Object pdfParentContainer) throws Exception{
+        if (pictureData == null) {
+            return;
+        }
+        IImageExtractor extractor = this.getImageExtractor();
+        extractor.extract(WORD_MEDIA + pictureData.getFileName(), pictureData.getData());
+        String src;
+        AttributesImpl attributes = null;
+        src = pictureData.getFileName();
+        if (StringUtils.isNotEmpty(src)) {
+            src = this.resolver.resolve(WORD_MEDIA + src);
+            attributes = SAXHelper.addAttrValue(attributes, SRC_ATTR, src);
+        }
+        attributes = SAXHelper.addAttrValue(attributes, STYLE_ATTR, style);
+        if ( attributes != null )
+        {
+            startElement( IMG_ELEMENT, attributes );
+            endElement( IMG_ELEMENT );
+        }
     }
 
     public void setActiveMasterPage( XHTMLMasterPage masterPage )
