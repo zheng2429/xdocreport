@@ -61,6 +61,8 @@ public class CSSStylesDocument
 
     private static final String PT_UNIT = "pt";
 
+    private static final String EM_UNIT = "em";
+
     private static final Object PERCENT_UNIT = "%";
 
     private List<CSSStyle> cssStyles;
@@ -209,11 +211,12 @@ public class CSSStylesDocument
                 {
                     Float lineHeight;
                     lineHeight = lineSpacing.getMultipleLeading();
-                    if ( lineSpacing.getLeading() != null )
-                    {
+                    if ( lineHeight != null ) {
+                        style.addProperty( LINE_HEIGHT, getValueAsEmphasize(lineHeight) );
+                    }else {
                         lineHeight = lineSpacing.getLeading();
+                        style.addProperty( LINE_HEIGHT, getValueAsPoint(lineHeight) );
                     }
-                    style.addProperty( LINE_HEIGHT, getValueAsPoint(lineHeight) );
                 }
 
             }
@@ -504,6 +507,11 @@ public class CSSStylesDocument
     public String getValueAsPoint( float value )
     {
         return new StringBuilder( String.valueOf( value ) ).append( PT_UNIT ).toString();
+    }
+
+    public String getValueAsEmphasize( float value )
+    {
+        return new StringBuilder( String.valueOf( value ) ).append( EM_UNIT ).toString();
     }
 
     private String getValueAsPercent( float value )
