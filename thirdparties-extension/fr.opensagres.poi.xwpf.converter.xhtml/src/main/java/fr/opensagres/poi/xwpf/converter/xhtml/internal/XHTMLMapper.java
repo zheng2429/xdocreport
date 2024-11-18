@@ -42,6 +42,7 @@ import java.util.Map;
 import com.microsoft.schemas.vml.CTImageData;
 import com.microsoft.schemas.vml.CTShape;
 import fr.opensagres.poi.xwpf.converter.core.*;
+import fr.opensagres.poi.xwpf.converter.core.styles.run.RunFontStyleDStrikeValueProvider;
 import fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSProperty;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;
@@ -387,7 +388,7 @@ public class XHTMLMapper
         	Color color = RunTextHighlightingValueProvider.INSTANCE.getValue(rPr, getStylesDocument());
         	if(color != null) cssStyle.addProperty(CSSStylePropertyConstants.BACKGROUND_COLOR, StringUtils.toHexString(color));
         	if(Boolean.TRUE.equals(RunFontStyleStrikeValueProvider.INSTANCE.getValue(rPr, getStylesDocument())) ||
-        			rPr.sizeOfDstrikeArray() > 0)
+                    Boolean.TRUE.equals(RunFontStyleDStrikeValueProvider.INSTANCE.getValue(rPr, getStylesDocument())))
         		cssStyle.addProperty("text-decoration", "line-through");
         	if(rPr.sizeOfVertAlignArray() > 0) {
         		int align = rPr.getVertAlignArray(0).getVal().intValue();
