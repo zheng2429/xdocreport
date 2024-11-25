@@ -28,6 +28,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.opensagres.poi.xwpf.converter.core.utils.ChineseNumberFactory;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLvl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumFmt;
@@ -123,6 +124,12 @@ public class ListItemContext
         else if ( STNumberFormat.DECIMAL_ZERO.equals( numFmt ) )
         {
             return number < 10 ? "0" + number : String.valueOf( number );
+        }
+        else if (STNumberFormat.CHINESE_LEGAL_SIMPLIFIED.equals( numFmt )){
+            return ChineseNumberFactory.getChineseLegalSimplified(number);
+        }
+        else if (STNumberFormat.CHINESE_COUNTING_THOUSAND.equals( numFmt )){
+            return ChineseNumberFactory.getChineseCountingThousand( number );
         }
         else if ( STNumberFormat.NONE.equals( numFmt ) )
         {
