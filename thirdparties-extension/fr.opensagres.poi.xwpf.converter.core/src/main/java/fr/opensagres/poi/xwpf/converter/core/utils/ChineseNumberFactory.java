@@ -3,12 +3,12 @@ package fr.opensagres.poi.xwpf.converter.core.utils;
 
 public class ChineseNumberFactory {
 
-    private static final char[] CN_SIMPLIFIED = {'零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖', };
-    private static final char[] CN_SIMPLIFIED_SERIES = {'拾', '佰', '仟', '萬'};
+    private static final char[] CN_SIMPLIFIED = {'〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'};
+    private static final char[] CN_SIMPLIFIED_SERIES = {'十', '百', '千', '万'};
 
     // chineseCountingThousand
-    private static final char[] CN_THOUSAND = {'〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'};
-    private static final char[] CN_THOUSAND_SERIES = {'十', '百', '千', '万'};
+    private static final char[] CN_THOUSAND = {'零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖', };
+    private static final char[] CN_THOUSAND_SERIES = {'拾', '佰', '仟', '萬'};
 
     // ideographTraditional
     private static final String[] TRADITIONAL = {"甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"};
