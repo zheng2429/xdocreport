@@ -125,11 +125,20 @@ public class ListItemContext
         {
             return number < 10 ? "0" + number : String.valueOf( number );
         }
-        else if (STNumberFormat.CHINESE_LEGAL_SIMPLIFIED.equals( numFmt )){
+        else if (STNumberFormat.CHINESE_LEGAL_SIMPLIFIED.equals( numFmt )||STNumberFormat.CHINESE_COUNTING.equals( numFmt )){
             return ChineseNumberFactory.getChineseLegalSimplified(number);
         }
         else if (STNumberFormat.CHINESE_COUNTING_THOUSAND.equals( numFmt )){
             return ChineseNumberFactory.getChineseCountingThousand( number );
+        }
+        else if (STNumberFormat.CARDINAL_TEXT.equals( numFmt )){
+            return ChineseNumberFactory.getCardinalText( number );
+        }
+        else if (STNumberFormat.IDEOGRAPH_TRADITIONAL.equals( numFmt )){
+            return ChineseNumberFactory.getIdeographTraditional( number );
+        }
+        else if (STNumberFormat.IDEOGRAPH_ZODIAC.equals( numFmt )){
+            return ChineseNumberFactory.getIdeographZodiac( number );
         }
         else if ( STNumberFormat.NONE.equals( numFmt ) )
         {
