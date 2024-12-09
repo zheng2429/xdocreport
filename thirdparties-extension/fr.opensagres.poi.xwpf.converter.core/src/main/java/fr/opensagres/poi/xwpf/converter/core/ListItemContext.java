@@ -125,11 +125,8 @@ public class ListItemContext
         {
             return number < 10 ? "0" + number : String.valueOf( number );
         }
-        else if (STNumberFormat.CHINESE_LEGAL_SIMPLIFIED.equals( numFmt )||STNumberFormat.CHINESE_COUNTING.equals( numFmt )){
+        else if (STNumberFormat.CHINESE_LEGAL_SIMPLIFIED.equals( numFmt )||STNumberFormat.CHINESE_COUNTING.equals( numFmt ) || STNumberFormat.CHINESE_COUNTING_THOUSAND.equals( numFmt )){
             return ChineseNumberFactory.getChineseLegalSimplified(number);
-        }
-        else if (STNumberFormat.CHINESE_COUNTING_THOUSAND.equals( numFmt )){
-            return ChineseNumberFactory.getChineseCountingThousand( number );
         }
         else if (STNumberFormat.CARDINAL_TEXT.equals( numFmt )){
             return ChineseNumberFactory.getCardinalText( number );
