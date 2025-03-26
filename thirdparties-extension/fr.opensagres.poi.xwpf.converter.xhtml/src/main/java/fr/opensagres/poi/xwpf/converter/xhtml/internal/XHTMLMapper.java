@@ -881,8 +881,11 @@ public class XHTMLMapper
     }
 
     private String fetchTitle(int outlineLvl){
-        String headTag = H1_ELT;
+        String headTag = P_ELEMENT;
         switch (outlineLvl){
+            case 0:
+                headTag = H1_ELT;
+                break;
             case 1:
                 headTag = H2_ELT;
                 break;
