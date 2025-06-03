@@ -347,7 +347,7 @@ public class XWPFTableUtil
         boolean percentUnit = ( STTblWidth.INT_PCT == tblWidth.getType().intValue() );
         if ( percentUnit )
         {
-            width = width / 100f;
+            width = width / 50f;
         }
         else
         {
