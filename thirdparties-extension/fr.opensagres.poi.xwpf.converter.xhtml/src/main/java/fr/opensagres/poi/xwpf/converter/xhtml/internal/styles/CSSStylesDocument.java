@@ -211,11 +211,13 @@ public class CSSStylesDocument
                 {
                     Float lineHeight;
                     lineHeight = lineSpacing.getMultipleLeading();
-                    if ( lineHeight != null ) {
+                    if ( lineHeight != null && lineHeight > 0 ) {
                         style.addProperty( LINE_HEIGHT, getValueAsEmphasize(lineHeight) );
                     }else {
                         lineHeight = lineSpacing.getLeading();
-                        style.addProperty( LINE_HEIGHT, getValueAsPoint(lineHeight) );
+                        if ( lineHeight != null && lineHeight > 0 ) {
+                            style.addProperty( LINE_HEIGHT, getValueAsPoint(lineHeight) );
+                        }
                     }
                 }
 
