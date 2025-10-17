@@ -60,6 +60,6 @@ public class XHTMLConstants
 
     public static final String SRC_ATTR = "src";
 
-    public static final String DATA_ATTR = "data:";
+    public static final String DATA_ATTR = "data:image/png";
 
 }

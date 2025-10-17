@@ -92,7 +92,15 @@ public class RunTextHighlightingValueProvider
         {
             return null;
         }
-        org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor.Enum val = highlight.getVal();
+        org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor.Enum val;
+        try {
+            // 如果 w:highlight 的 w:val 是 "auto"，这一行会抛出异常
+            val = highlight.getVal();
+        } catch (Exception e) {
+            // 捕获异常，说明值无效，很可能是 "auto" 或其他非法值
+            // 在这种情况下，我们将其视为无高亮
+            return null;
+        }
         if ( STHighlightColor.BLACK.equals( val ) )
         {
             return Color.BLACK;
