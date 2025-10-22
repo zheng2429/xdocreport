@@ -44,16 +44,7 @@ import com.microsoft.schemas.vml.CTShape;
 import fr.opensagres.poi.xwpf.converter.core.*;
 import fr.opensagres.poi.xwpf.converter.core.styles.run.RunFontStyleDStrikeValueProvider;
 import fr.opensagres.poi.xwpf.converter.xhtml.internal.styles.CSSProperty;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFFooter;
-import org.apache.poi.xwpf.usermodel.XWPFHeader;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFPictureData;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFSDT;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
-import org.apache.poi.xwpf.usermodel.XWPFTableCell;
-import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.apache.poi.xwpf.usermodel.*;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -296,6 +287,11 @@ public class XHTMLMapper
             cssStyle = new CSSStyle( SPAN_ELEMENT, null );
         }
         if (cssStyle != null) {
+            if (cssStyle.getProperties().isEmpty() && this.currentRunAttributes == null){
+                XWPFStyle style = paragraph.getDocument().getStyles().getStyleWithName("Normal");
+                CTRPr defaultRPr = style.getCTStyle().getRPr();
+                cssStyle = getStylesDocument().createCSSStyle( defaultRPr );
+            }
             cssStyle.addProperty(CSSStylePropertyConstants.WHITE_SPACE, "pre-wrap");
         }
         this.currentRunAttributes = createStyleAttribute( cssStyle, currentRunAttributes );
